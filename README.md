@@ -35,8 +35,8 @@ This library also allows saving RAM, 82 bytes, by disabling code for receiving.
 This is achieved by enabling (uncommenting) `RH_ASK_TX_ONLY` at the beginning of `RH_ASK.h`.
 
 ## Timer 1 on ATtiny
-RH_ASK on ATtiny8x uses Timer 1 to generate interrupts 8 times per bit interval. 
-Timer 0 is used by Arduino platform for `millis()`/`micros()` which is in turn used by `delay()`
+RH_ASK on ATtiny8x uses Timer 0 to generate interrupts 8 times per bit interval. 
+Timer 0 is used by Arduino platform for `millis()`/`micros()` which is in turn used by `delay()`.
 Timer 1 is also used by some other libraries, e.g. Servo. Always check usage of Timer 1 before enabling this.
 
 Support for Timer 1 on ATtiny devices is already part of the official [RadioHead library](https://www.airspayce.com/mikem/arduino/RadioHead/) distribution since 1.116, where it must be enabled in the `RH_ASK.cpp`
