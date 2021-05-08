@@ -141,10 +141,10 @@ uint8_t RH_ASK::timerCalc(uint16_t speed, uint16_t max_ticks, uint16_t *nticks)
     unsigned long inv_bit_time = ((unsigned long)speed) * _overSamplingCount;
     for (prescaler = 1; prescaler < NUM_PRESCALERS; prescaler += 1)
     {
-	// Integer arithmetic courtesy Jim Remington
-	// 1/Amount of time per CPU clock tick (in seconds)
-	uint16_t prescalerValue;
-	memcpy_P(&prescalerValue, &prescalers[prescaler], sizeof(uint16_t));
+        // Integer arithmetic courtesy Jim Remington
+        // 1/Amount of time per CPU clock tick (in seconds)
+        uint16_t prescalerValue;
+        memcpy_P(&prescalerValue, &prescalers[prescaler], sizeof(uint16_t));
         unsigned long inv_clock_time = F_CPU / ((unsigned long)prescalerValue);
         // number of prescaled ticks needed to handle bit time @ speed
         ulticks = inv_clock_time / inv_bit_time;
@@ -158,7 +158,7 @@ uint8_t RH_ASK::timerCalc(uint16_t speed, uint16_t max_ticks, uint16_t *nticks)
 
 
     // Check for error
-    if ((prescaler == 6) || (ulticks < 2) || (ulticks > max_ticks))
+    if ((prescaler == NUM_PRESCALERS - 1) || (ulticks < 2) || (ulticks > max_ticks))
     {
         // signal fault
         *nticks = 0;

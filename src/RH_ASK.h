@@ -22,7 +22,6 @@
 
 // *********************************************
 
-//#endif
 // Maximum message length (including the headers, byte count and FCS) we are willing to support
 // This is pretty arbitrary
 #define RH_ASK_MAX_PAYLOAD_LEN 67
