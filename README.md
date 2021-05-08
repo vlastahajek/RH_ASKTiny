@@ -1,6 +1,6 @@
 # RH_ASKTiny
 This is [RadioHead library](https://www.airspayce.com/mikem/arduino/RadioHead/) simplified to RH_ASK only and patched to allow
-communication with 1MHz oscillator and possibility to save RAM by disabling receiving .
+communication with 1MHz oscillator and possibility to save RAM by disabling receiving.
 
 All credits goes to Mike McCauley, the author of the [RadioHead library](https://www.airspayce.com/mikem/arduino/RadioHead/). 
 
@@ -12,9 +12,9 @@ _At 1MHz clock, get 1/8 of the expected baud rate_
 
 It doesn't seem that timer is actually running at 1/8 speed, but it is still a bit off.
 Timer is configured to run 8x faster than the required transmission speed.
-This is necessary for precise bit sampling during receiving, but it not important for transmission.
+This is necessary for precise bit sampling during receiving, but it is not important for transmission.
 
-RH_ASK is in this library enhanced with parameter `overSampling`, which controls timer speed/transmission speed ration. It is `8` by default. Setting it to `1` seems to work around the problem when transmitting on 1MHz speed.  
+RH_ASK is in this library enhanced with parameter `overSampling`, which controls timer speed/transmission speed ratio. It is `8` by default. Setting it to `1` seems to work around the problem when transmitting on 1MHz speed.  
 
 ```c++
 RH_ASK(uint16_t speed = 2000, uint8_t rxPin = 11, uint8_t txPin = 12, uint8_t pttPin = 10, bool pttInverted = false,  uint8_t overSampling = 8); 
