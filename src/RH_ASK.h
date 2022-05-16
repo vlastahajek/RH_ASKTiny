@@ -12,13 +12,15 @@
 // ********* Feature switches *************
 //
 // Uncomment the define RH_ASK_TX_ONLY bellow to save RAM (~82 bytes)  in case of transmitting only
-//#define RH_ASK_TX_ONLY    
+#if (RH_PLATFORM == RH_PLATFORM_ATTINY) 
+# define RH_ASK_TX_ONLY    
+#endif
  
 // RH_ASK on ATtiny8x uses Timer 0 to generate interrupts 8 times per bit interval. 
 // Timer 0 is used by Arduino platform for millis()/micros() which is used by delay()
 // Uncomment the define RH_ASK_ATTINY_USE_TIMER1 bellow, if you want to use Timer 1 instead of Timer 0 on ATtiny
 // Timer 1 is also used by some other libraries, e.g. Servo. Alway check usage of Timer 1 before enabling this.
-//#define RH_ASK_ATTINY_USE_TIMER1
+#define RH_ASK_ATTINY_USE_TIMER1
 
 // *********************************************
 
@@ -287,10 +289,10 @@ public:
     /// \param[in] speed The desired bit rate in bits per second
     /// \param[in] rxPin The pin that is used to get data from the receiver
     /// \param[in] txPin The pin that is used to send data to the transmitter
-    /// \param[in] pttPin The pin that is connected to the transmitter controller. It will be set HIGH to enable the transmitter (unless pttInverted is true).
-    /// \param[in] pttInverted true if you desire the pttin to be inverted so that LOW wil enable the transmitter.
+    /// \param[in] pttPin The pin that is connected to the transmitter controller. It will be set HIGH to enable the transmitter.
+    /// \param[in] txInverted true if you desire the tx state to be inverted 
     /// \param[in] overSampling Timer speed/transmission speed ratio. Set 1 for 1MHz transmission only
-   RH_ASK(uint16_t speed = 2000, uint8_t rxPin = 11, uint8_t txPin = 12, uint8_t pttPin = 10, bool pttInverted = false, uint8_t overSampling = 8);
+   RH_ASK(uint16_t speed = 2000, uint8_t rxPin = 11, uint8_t txPin = 12, uint8_t pttPin = 10, bool txInverted = false, uint8_t overSampling = 8);
 
     /// Initialise the Driver transport hardware and software.
     /// Make sure the Driver is properly configured before calling init().
@@ -389,6 +391,9 @@ protected:
     /// The configure transmitter pin
     uint8_t         _txPin;
 
+    /// True of the sense of the txPin is to be inverted
+    bool            _txInverted;
+
 #ifndef RH_ASK_TX_ONLY
     /// The configure receiver pin
     uint8_t         _rxPin;
@@ -397,11 +402,6 @@ protected:
     /// The configured transmitter enable pin
     uint8_t         _pttPin;
 
-    /// True of the sense of the rxPin is to be inverted
-    bool            _rxInverted;
-
-    /// True of the sense of the pttPin is to be inverted
-    bool            _pttInverted;
 
     // Used in the interrupt handlers
     /// Buf is filled but not validated

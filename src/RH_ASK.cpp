@@ -53,15 +53,15 @@ RH_DRAM_ATTR static uint8_t symbols[] =
 // This is the value of the start symbol after 6-bit conversion and nybble swapping
 #define RH_ASK_START_SYMBOL 0xb38
 
-RH_ASK::RH_ASK(uint16_t speed, uint8_t rxPin, uint8_t txPin, uint8_t pttPin, bool pttInverted, uint8_t overSampling)
+RH_ASK::RH_ASK(uint16_t speed, uint8_t rxPin, uint8_t txPin, uint8_t pttPin, bool txInverted, uint8_t overSampling)
     :
     _speed(speed),
     _txPin(txPin),
+    _txInverted(txInverted),
 #ifndef RH_ASK_TX_ONLY    
     _rxPin(rxPin),
     _pttPin(pttPin),
     _rxInverted(false),
-    _pttInverted(pttInverted),
 #endif    
     _overSamplingCount(overSampling)
 {
@@ -90,6 +90,7 @@ bool RH_ASK::init()
 #else
     // Set up digital IO pins for arduino
     pinMode(_txPin, OUTPUT);
+    writeTx(false);
 #ifndef RH_ASK_TX_ONLY        
     pinMode(_rxPin, INPUT);
     pinMode(_pttPin, OUTPUT);
@@ -240,6 +241,7 @@ void RH_ASK::timerSetup()
     timer.resume();
 
 #elif (RH_PLATFORM == RH_PLATFORM_ATTINY)
+ #warning ATtiny
     // figure out prescaler value and counter match value
     // REVISIT: does not correctly handle 1MHz clock speeds, only works with 8MHz clocks
     // At 1MHz clock, get 1/8 of the expected baud rate
@@ -266,7 +268,7 @@ void RH_ASK::timerSetup()
     // Set mask to fire interrupt when OCF1A bit is set in TIFR1
     TIMSK |= _BV(OCIE1A); 
    #else //TCCR1
-    // ATtiny84
+ #warning ATtiny84    // ATtiny84
     TCCR1A = 0; // Output Compare pins disconnected
     TCCR1B = _BV(WGM12); // Turn on CTC mode
 
@@ -680,12 +682,13 @@ bool RH_INTERRUPT_ATTR RH_ASK::readRx()
 void RH_INTERRUPT_ATTR RH_ASK::writeTx(bool value)
 {
 #if (RH_PLATFORM == RH_PLATFORM_GENERIC_AVR8)
+#warning("RH_PLATFORM_GENERIC_AVR8")
     ((value) ? (RH_ASK_TX_PORT |= (1<<RH_ASK_TX_PIN)) : (RH_ASK_TX_PORT &= ~(1<<RH_ASK_TX_PIN)));
 // No longer relevant: PinStatus onlty used in old versions
 //#elif (RH_PLATFORM == RH_PLATFORM_ATTINY_MEGA)
 //    digitalWrite(_txPin, (PinStatus)value);
 #else
-    digitalWrite(_txPin, value);
+    digitalWrite(_txPin, value ^ _txInverted);
 #endif
 }
 
@@ -703,7 +706,7 @@ void RH_INTERRUPT_ATTR RH_ASK::writePtt(bool value)
     //#elif (RH_PLATFORM == RH_PLATFORM_ATTINY_MEGA)
     //    digitalWrite(_txPin, (PinStatus)(value ^ _pttInverted));
     #else
-        digitalWrite(_pttPin, value ^ _pttInverted);
+        digitalWrite(_pttPin, value );
     #endif
 #endif
 }
